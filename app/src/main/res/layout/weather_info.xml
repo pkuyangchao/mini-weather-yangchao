@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!--导航条-->
     <RelativeLayout
         android:id="@+id/title"
         android:layout_width="match_parent"
@@ -98,7 +99,7 @@
                 android:singleLine="true"
                 android:text="今天18.25发布"
                 android:textColor="@android:color/white"
-                android:textSize="15.0sp"/>
+                android:textSize="20.0sp"/>
 
             <!--湿度信息-->
             <TextView
@@ -111,7 +112,7 @@
                 android:singleLine="true"
                 android:text="湿度：57%"
                 android:textColor="@android:color/white"
-                android:textSize="15.0sp"/>
+                android:textSize="18.0sp"/>
 
             <!--PM2.5-->
             <LinearLayout
@@ -161,8 +162,8 @@
                     <!--PM2.5图片-->
                     <ImageView
                         android:id="@+id/pm2_5_img"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="50dp"
+                        android:layout_height="70dp"
                         android:layout_marginLeft="5.0dp"
                         android:src="@drawable/biz_plugin_weather_0_50"/>
 
@@ -188,14 +189,13 @@
                 android:layout_alignParentLeft="true"
                 android:layout_below="@+id/humidity"
                 android:layout_centerInParent="true"
-                android:layout_marginTop="15.0dp"
-                android:layout_marginRight="20dp">
+                android:layout_marginTop="10.0dp">
 
                 <!--天气情况图片示例-->
                 <ImageView
                     android:id="@+id/weather_img"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
                     android:layout_alignParentLeft="true"
                     android:src="@drawable/biz_plugin_weather_qing"
                     />
@@ -207,6 +207,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
                     android:layout_marginLeft="5dp"
+                    android:layout_marginTop="10dp"
                     android:layout_toRightOf="@+id/weather_img"
                     android:text="今天 星期三"
                     android:textColor="@android:color/white"
