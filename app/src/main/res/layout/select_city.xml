@@ -2,7 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
+    <!--选择城市界面导航-->
     <RelativeLayout
+        android:id="@+id/select_city_title"
         android:layout_width="match_parent"
         android:layout_height="45.0dp"
         android:background="#ffcd2626">
@@ -32,5 +34,20 @@
             android:foregroundGravity="center"/>
 
     </RelativeLayout>
+
+    <!--选择城市界面布局-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/select_city_title">
+
+        <ListView
+            android:id="@+id/list_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </ListView>
+    </RelativeLayout>
+
 
 </RelativeLayout>

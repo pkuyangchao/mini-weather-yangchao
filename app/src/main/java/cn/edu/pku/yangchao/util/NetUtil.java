@@ -12,6 +12,13 @@ public class NetUtil {
     public static final int NETWORD_WIFI = 1;
     public static final int NETWORN_MOBILE = 2;
 
+    /**
+     * ConnectivityManager主要管理和网络连接相关的操作，
+     * 相关的TelephonyManager则管理和手机、运营商等的相关信息；WifiManager则管理和wifi相关的信息。 
+     * 想访问网络状态，首先得添加权限<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+     * @param context
+     * @return
+     */
     public static int getNetWorkState(Context context){
         ConnectivityManager connectivityManager = (ConnectivityManager)context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);

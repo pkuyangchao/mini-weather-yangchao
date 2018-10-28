@@ -15,6 +15,12 @@ import cn.edu.pku.yangchao.bean.City;
 import cn.edu.pku.yangchao.db.CityDB;
 
 /**
+ * Android系统自动会为每个程序运行时创建一个Application类的对象且只创建一个（用来存储系统的一些信息），
+ * 所以Application可以说是单例（singleton）模式的一个类
+ * 自定义Application:创建一个类继承Application并在AndroidManifest.xml文件中的application标签中进行注册
+ * 启动Application时，系统会创建一个PID，即进程ID，所有的Activity都会在此进程上运行
+ * Application对象的生命周期是整个程序中最长的，它的生命周期就等于这个程序的生命周期。
+ * 可以通过Application来进行一些，如：数据传递、数据共享和数据缓存等操作。
  * Created by YangChao on 2018/10/16.
  */
 public class MyApplication extends Application{
@@ -37,6 +43,7 @@ public class MyApplication extends Application{
 
     }
 
+    //获取MyApplication实例，保护私有变量
     public static MyApplication getInstance(){
         return myApplication;
     }
@@ -105,5 +112,9 @@ public class MyApplication extends Application{
         }
         Log.d(TAG,"i="+i);
         return true;
+    }
+
+    public List<City> getCityList() {
+        return mCityList;
     }
 }

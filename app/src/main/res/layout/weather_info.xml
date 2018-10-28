@@ -61,6 +61,7 @@
 
     </RelativeLayout>
 
+    <!--页面主体框架-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -148,6 +149,7 @@
                             android:textColor="@android:color/white"
                             android:textSize="12.0sp"/>
 
+                        <!--singleLine 是强制不让换行-->
                         <TextView
                             android:id="@+id/pm_data"
                             android:layout_width="wrap_content"
@@ -162,8 +164,8 @@
                     <!--PM2.5图片-->
                     <ImageView
                         android:id="@+id/pm2_5_img"
-                        android:layout_width="50dp"
-                        android:layout_height="70dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_marginLeft="5.0dp"
                         android:src="@drawable/biz_plugin_weather_0_50"/>
 
@@ -183,6 +185,24 @@
             </LinearLayout>
 
             <!--今日天气-->
+            <!--android:layout_above="@id/xxx" 将控件置于给定ID控件之上
+                android:layout_below="@id/xxx" 将控件置于给定ID控件之下
+
+                android:layout_toLeftOf="@id/xxx"  将控件的右边缘和给定ID控件的左边缘对齐
+                android:layout_toRightOf="@id/xxx"  将控件的左边缘和给定ID控件的右边缘对齐
+
+                android:layout_alignLeft="@id/xxx"  将控件的左边缘和给定ID控件的左边缘对齐
+                android:layout_alignTop="@id/xxx"  将控件的上边缘和给定ID控件的上边缘对齐
+                android:layout_alignRight="@id/xxx"  将控件的右边缘和给定ID控件的右边缘对齐
+                android:layout_alignBottom="@id/xxx"  将控件的底边缘和给定ID控件的底边缘对齐
+                android:layout_alignParentLeft="true"  将控件的左边缘和父控件的左边缘对齐
+                android:layout_alignParentTop="true"  将控件的上边缘和父控件的上边缘对齐
+                android:layout_alignParentRight="true"  将控件的右边缘和父控件的右边缘对齐
+                android:layout_alignParentBottom="true" 将控件的底边缘和父控件的底边缘对齐
+                android:layout_centerInParent="true"  将控件置于父控件的中心位置
+                android:layout_centerHorizontal="true"  将控件置于水平方向的中心位置
+                android:layout_centerVertical="true"  将控件置于垂直方向的中心位置
+             -->
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -194,8 +214,8 @@
                 <!--天气情况图片示例-->
                 <ImageView
                     android:id="@+id/weather_img"
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:src="@drawable/biz_plugin_weather_qing"
                     />
@@ -207,8 +227,8 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
                     android:layout_marginLeft="5dp"
-                    android:layout_marginTop="10dp"
                     android:layout_toRightOf="@+id/weather_img"
+                    android:singleLine="true"
                     android:text="今天 星期三"
                     android:textColor="@android:color/white"
                     android:textSize="20sp"/>

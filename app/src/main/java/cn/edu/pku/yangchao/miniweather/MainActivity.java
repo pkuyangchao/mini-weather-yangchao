@@ -43,6 +43,19 @@ public class MainActivity extends Activity implements View.OnClickListener{
             ,temperatureTv, climateTv, windTv, city_name_Tv;
     private ImageView weatherImg, pmImg;
 
+    //用于保存主页面code数据
+    private String tempCityCode="101010100";
+    /**
+     * Android中的View不是线程安全的
+     *   在Android应用启动时，会自动创建一个线程，即程序的主线程，
+     *   主线程负责UI的展示、UI事件消息的派发处理等等，因此主线程也叫做UI线程。
+     * Handler：是Android中引入的一种让开发者参与处理线程中消息循环的机制。（实现跨线程跟新UI控件）
+     *   每个Hanlder都关联了一个线程，每个线程内部都维护了一个消息队列MessageQueue
+     *   这样Handler实际上也就关联了一个消息队列
+     *   Handler可以用来在多线程间进行通信。
+     *   在执行new Handler()的时候，默认情况下Handler会绑定当前代码执行的线程
+     *   两种方法：一：通过post方法（uiHandler.post(runnable)），二：调用sendMessage方法。
+     */
     //通过消息机制，将解析的天气对象，通过消息发送给主线程，主线程接收到消息数据后，调用函数，更新UI上的数据
     private Handler mHandler = new Handler(){
         @Override
@@ -63,6 +76,10 @@ public class MainActivity extends Activity implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.weather_info);
 
+        if (savedInstanceState!=null){
+            String temp = savedInstanceState.getString("temp_city_code");
+            querWeatherCode(temp);
+        }
         mUpdateBtn = findViewById(R.id.title_update_btn);
         mUpdateBtn.setOnClickListener(this);
 
@@ -75,6 +92,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
             Toast.makeText(MainActivity.this,"网络挂断了",Toast.LENGTH_LONG).show();
         }
 
+        //为选择城市控件添加点击事件
         mCitySelect = (ImageView)findViewById(R.id.title_city_manager);
         mCitySelect.setOnClickListener(this);
 
@@ -83,18 +101,23 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
+        //选择城市控件的点击事件
         if (v.getId()==R.id.title_city_manager){
+            //用于接收返回的信息
             Intent i = new Intent(this,SelectCity.class);
             startActivityForResult(i,1);
         }
 
         if (v.getId() == R.id.title_update_btn){
             SharedPreferences sharedPreferences = getSharedPreferences("config",MODE_PRIVATE);
+            //如果没有数据，就赋值一个缺省值
             String cityCode = sharedPreferences.getString("main_city_code","101010100");
+            tempCityCode = cityCode;
             Log.d("myWeather",cityCode);
 
             if (NetUtil.getNetWorkState(this) != NetUtil.NETWORN_NONE){
                 Log.d("myWeather","网络OK");
+                //根据城市code获取网络数据
                 querWeatherCode(cityCode);
             }else {
                 Log.d("myWeather","网络挂了");
@@ -106,7 +129,9 @@ public class MainActivity extends Activity implements View.OnClickListener{
     //接收城市选择返回的数据
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if (requestCode == 1 && resultCode == RESULT_OK){
+            //获取数据
             String newCityCode = data.getStringExtra("cityCode");
+            tempCityCode = newCityCode;
             Log.d("myWeather","选择的城市代码为："+newCityCode);
 
             if (NetUtil.getNetWorkState(this)!=NetUtil.NETWORN_NONE){
@@ -123,17 +148,33 @@ public class MainActivity extends Activity implements View.OnClickListener{
     private void querWeatherCode(String cityCode){
         final String address = "http://wthrcdn.etouch.cn/WeatherApi?citykey="+cityCode;
         Log.d("myWeather",address);
+        //耗时的过程都放在除主线程外的地方
         new Thread(new Runnable() {
             @Override
             public void run() {
+                /**
+                 * HttpURLConnection：基于http协议的，支持get，post，put，delete等各种请求方式
+                 */
                 HttpURLConnection con = null;
                 TodayWeather todayWeather = null;
                 try{
                     URL url = new URL(address);
+                    //得到连接对象
                     con = (HttpURLConnection) url.openConnection();
+                    //设置请求方式
                     con.setRequestMethod("GET");
+
+                    /**
+                     * 为什么？防止程序运行过程中，因为网络等问题使程序阻塞
+                     * ConnectTimeout只有在网络正常的情况下才有效，而当网络不正常时，ReadTimeout才真正的起作用
+                     * connect timeout：是建立连接的超时时间；
+                     * read timeout：是传递数据的超时时间。
+                     * 应当结合使用
+                     */
                     con.setConnectTimeout(8000);
                     con.setReadTimeout(8000);
+                    //得到响应流，并不是数据，但可以从中读出数据，从流中读取数据的操作必须放在子线程
+                    // 从这个流对象中只能读取一次数据，第二次读取时将会得到空数据。。
                     InputStream in = con.getInputStream();
                     BufferedReader reader = new BufferedReader(new InputStreamReader(in));
                     StringBuffer response = new StringBuffer();
@@ -150,6 +191,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
                     if (todayWeather != null){
                         Log.d("myWeather",todayWeather.toString());
 
+                        //给主线程发送消息
                         Message message = new Message();
                         message.what = UPDATE_TODAY_WEATHER;
                         message.obj = todayWeather;
@@ -177,17 +219,24 @@ public class MainActivity extends Activity implements View.OnClickListener{
         int lowCount = 0;
         int typeCount = 0;
         try {
+            /**
+             * Android系统中和创建XML相关的包为org.xmlpull.v1
+             * 在这个包中不仅提供了用于创建XML的 XmlSerializer，还提供了用来解析XML的Pull方式解析器 XmlPullParser
+             */
+            //使用工厂类XmlPullParserFactory的方式
             XmlPullParserFactory fac = XmlPullParserFactory.newInstance();
             XmlPullParser xmlPullParser = fac.newPullParser();
+            // xpp.setInput(is, "utf-8")，声明定义保存xml信息的数据结构
             xmlPullParser.setInput(new StringReader(xmldata));
             int eventType = xmlPullParser.getEventType();
             Log.d("myWeather","parseXML");
 
             while (eventType != XmlPullParser.END_DOCUMENT){
                 switch (eventType){
-                    //判断当前事件是否为文档开始事件
+                    //判断当前事件是否为文档开始事件，如果是，跳出循环，进入下一个元素
                     case XmlPullParser.START_DOCUMENT:
                         break;
+                    //判断当前事件是否是标签元素的开始事件
                     case XmlPullParser.START_TAG:
                         if (xmlPullParser.getName().equals("resp")){
                             todayWeather = new TodayWeather();
@@ -217,7 +266,9 @@ public class MainActivity extends Activity implements View.OnClickListener{
                                 eventType = xmlPullParser.next();
                                 Log.d("myWeather","quality:  "+xmlPullParser.getText());
                                 todayWeather.setQuality(xmlPullParser.getText());
-                            }else if (xmlPullParser.getName().equals("fengxiang") && fengxiangCount == 0){
+                            }
+                            //fengxiangCount==0，因为只有第一个数据是当天的
+                            else if (xmlPullParser.getName().equals("fengxiang") && fengxiangCount == 0){
                                 eventType = xmlPullParser.next();
                                 Log.d("myWeather","fengxiang:  "+xmlPullParser.getText());
                                 todayWeather.setFengxiang(xmlPullParser.getText());
@@ -250,6 +301,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
                             }
                         }
                         break;
+                    //判断当前事件是否是标签元素结束事件
                     case XmlPullParser.END_TAG:
                         break;
                 }
@@ -304,6 +356,16 @@ public class MainActivity extends Activity implements View.OnClickListener{
         temperatureTv.setText(todayWeather.getHigh()+"-"+todayWeather.getLow());
         climateTv.setText(todayWeather.getType());
         windTv.setText("风力"+todayWeather.getFengli());
+        //Toast.makeText的第一个参数是：当前的上下文
         Toast.makeText(MainActivity.this,"更新成功",Toast.LENGTH_LONG).show();
+    }
+
+
+    //解决活动被回收时，临时数据得不到保存的问题
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        String temp = tempCityCode;
+        outState.putString("temp_city_code",temp);
     }
 }
