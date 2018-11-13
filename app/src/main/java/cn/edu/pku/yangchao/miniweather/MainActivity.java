@@ -9,6 +9,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +43,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
     private TextView cityTv, timeTv, humidityTv, weekTv, pmDataTv, pmQualityTv
             ,temperatureTv, climateTv, windTv, city_name_Tv;
     private ImageView weatherImg, pmImg;
+    private ProgressBar progressBar;
 
     //用于保存主页面code数据
     private String tempCityCode="101010100";
@@ -83,6 +85,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
         mUpdateBtn = findViewById(R.id.title_update_btn);
         mUpdateBtn.setOnClickListener(this);
 
+        progressBar = (ProgressBar)findViewById(R.id.title_update_progress);
+
         //检查网络连接状态
         if (NetUtil.getNetWorkState(this) != NetUtil.NETWORN_NONE){
             Log.d("myWeather","网络正常");
@@ -109,6 +113,9 @@ public class MainActivity extends Activity implements View.OnClickListener{
         }
 
         if (v.getId() == R.id.title_update_btn){
+            progressBar.setVisibility(View.VISIBLE);
+            mUpdateBtn.setVisibility(View.INVISIBLE);
+
             SharedPreferences sharedPreferences = getSharedPreferences("config",MODE_PRIVATE);
             //如果没有数据，就赋值一个缺省值
             String cityCode = sharedPreferences.getString("main_city_code","101010100");
@@ -358,6 +365,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
         windTv.setText("风力"+todayWeather.getFengli());
         //Toast.makeText的第一个参数是：当前的上下文
         Toast.makeText(MainActivity.this,"更新成功",Toast.LENGTH_LONG).show();
+        progressBar.setVisibility(View.INVISIBLE);
+        mUpdateBtn.setVisibility(View.VISIBLE);
     }
 
 

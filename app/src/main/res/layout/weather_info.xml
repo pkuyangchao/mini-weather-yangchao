@@ -37,13 +37,23 @@
         android:textColor="#ffffffff"
         android:textSize="22.0sp"/>
 
+    <ProgressBar
+        android:id="@+id/title_update_progress"
+        android:layout_width="45.0dp"
+        android:layout_height="45.0dp"
+        android:layout_alignParentRight="true"
+        android:foregroundGravity="center"
+        android:indeterminateDrawable="@drawable/progressbar"
+        android:visibility="invisible"
+        />
     <ImageView
         android:id="@+id/title_update_btn"
         android:layout_width="45.0dp"
         android:layout_height="45.0dp"
         android:layout_alignParentRight="true"
         android:foregroundGravity="center"
-        android:src="@drawable/title_update"/>
+        android:src="@drawable/title_update"
+        android:visibility="visible"/>
 
     <ImageView
         android:id="@+id/title_share"
