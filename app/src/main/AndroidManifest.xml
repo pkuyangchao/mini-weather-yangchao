@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="cn.edu.pku.yangchao.miniweather">
 
     <!--增加访问internet的权限-->
@@ -6,6 +7,17 @@
 
     <!--设置访问网络状态的权限-->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
+
+    <!--定位权限-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
+        tools:ignore="ProtectedPermissions"></uses-permission>
+    <uses-permission android:name="android.permission.WAKE_LOCK"></uses-permission>
+
     <!--注册application： android:name="cn.edu.pku.yangchao.app.MyApplication"-->
     <application
         android:name="cn.edu.pku.yangchao.app.MyApplication"
@@ -18,6 +30,11 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
 
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="uHzD9U8YVkRAudnRPuCbV7DUSQsjpavX">
+        </meta-data>
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"></action>
@@ -27,7 +44,11 @@
 
         <!--注册选择城市的活动组件-->
         <activity android:name=".SelectCity">
-
         </activity>
+
+        <service android:name="com.baidu.location.f" android:enabled="true"
+            android:process=":remote">
+        </service>
+
     </application>
 </manifest>
